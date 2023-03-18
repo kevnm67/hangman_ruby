@@ -2,6 +2,7 @@ require_relative "display.rb"
 require_relative "file_saving.rb"
 
 class Game
+
   include Display
   include FileSaving
 
@@ -48,12 +49,15 @@ class Game
   # gets the player's guess
   def player_guess
     puts 'Enter your guess. Choose a letter from a-z:'
+
     loop do 
       guess = gets.chomp.downcase
+      
       if valid_guess(guess) == true
         @guess = guess
       elsif valid_guess(guess) == false
-        FileSaving.new.save
+        file_saving = FileSaving.new
+        file_saving.save_game
       else
         valid_guess(guess)
       end
@@ -69,19 +73,29 @@ class Game
   def store_guess(guess)
     @guesses << guess
   end
+  
 
   # checks the player's guess. If the player's guess is correct, update the masked word with the correct letters
   def valid_guess(input)
-    if input.length == 1 && input == 'a'..'z'
-      true
-    elsif input == 'save'
-      false
-    else
+    if not is_alpha(input)
       'Input Error. Try again.'
+    else
+      input != 'save'
     end
+  end
+  
+  # Whether input is an alpha string
+  def is_alpha(str)
+    str.count("^a-zA-Z").zero?
   end
 end
 
+########
+# Main #
+########
+
 hangman = Game.new
+
 # hangman.start
+
 hangman.player_guess
